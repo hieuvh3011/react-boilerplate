@@ -1,0 +1,26 @@
+# Docker ignore file
+node_modules
+npm-debug.log
+build
+dist
+.git
+.gitignore
+.env
+.env.local
+.env.*.local
+coverage
+*.md
+!README.md
+.vscode
+.idea
+.DS_Store
+*.log
+.github
+.husky
+tests
+playwright-report
+test-results
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
