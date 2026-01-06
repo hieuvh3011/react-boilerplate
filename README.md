@@ -1,6 +1,21 @@
 # React TypeScript Boilerplate
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF.svg)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC.svg)](https://tailwindcss.com/)
+[![CI](https://github.com/yourusername/react-typescript-boilerplate/workflows/CI/badge.svg)](https://github.com/yourusername/react-typescript-boilerplate/actions)
+
 A comprehensive, production-ready React boilerplate with TypeScript, Tailwind CSS, authentication, internationalization, and complete testing setup.
+
+> **Use this template**: Click the "Use this template" button above or run:
+> ```bash
+> npx degit yourusername/react-typescript-boilerplate my-app
+> cd my-app
+> npm install --legacy-peer-deps
+> npm start
+> ```
 
 ## ✨ Features
 
@@ -74,6 +89,18 @@ npm start
 ```
 
 The app will open at `http://localhost:3000` (or another port if 3000 is busy).
+
+### Using Docker 🐳
+
+```bash
+# Development mode with hot reload
+docker-compose up dev
+
+# Production mode with nginx
+docker-compose up prod
+```
+
+See [DOCKER.md](DOCKER.md) for detailed Docker setup and deployment guide.
 
 ## 🔐 Mock Credentials
 

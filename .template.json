@@ -1,0 +1,41 @@
+{
+  "name": "react-typescript-boilerplate",
+  "displayName": "React TypeScript Boilerplate",
+  "description": "A modern, production-ready React TypeScript boilerplate with Vite, Tailwind CSS v4, authentication, i18n, and comprehensive testing",
+  "version": "1.0.0",
+  "author": "Your Name <your-email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/react-typescript-boilerplate"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/react-typescript-boilerplate/issues"
+  },
+  "homepage": "https://github.com/yourusername/react-typescript-boilerplate#readme",
+  "keywords": [
+    "react",
+    "typescript",
+    "vite",
+    "tailwind",
+    "boilerplate",
+    "template",
+    "starter",
+    "react-19",
+    "zustand",
+    "i18n",
+    "authentication",
+    "eslint",
+    "prettier",
+    "testing",
+    "playwright",
+    "feature-sliced-design",
+    "fsd",
+    "dark-mode",
+    "responsive"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
