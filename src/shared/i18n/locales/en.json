@@ -1,0 +1,61 @@
+{
+  "common": {
+    "appName": "React Boilerplate",
+    "welcome": "Welcome",
+    "logout": "Logout"
+  },
+  "nav": {
+    "home": "Home",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "name": "Name",
+    "loginButton": "Sign In",
+    "registerButton": "Sign Up",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "loginSuccess": "Login successful!",
+    "registerSuccess": "Registration successful!",
+    "invalidCredentials": "Invalid email or password",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "passwordsNotMatch": "Passwords do not match",
+    "nameRequired": "Name is required"
+  },
+  "home": {
+    "title": "Home Page",
+    "description": "Welcome to your React Boilerplate application",
+    "navigation": "Navigation",
+    "features": "Features",
+    "featuresList": {
+      "auth": "Authentication with protected routes",
+      "theme": "Dark/Light theme switching",
+      "i18n": "Internationalization (English/Vietnamese)",
+      "state": "State management with Zustand",
+      "testing": "Comprehensive testing setup"
+    }
+  },
+  "profile": {
+    "title": "Profile Page",
+    "description": "Manage your profile information",
+    "userInfo": "User Information",
+    "editProfile": "Edit Profile"
+  },
+  "settings": {
+    "title": "Settings Page",
+    "description": "Configure your application preferences",
+    "appearance": "Appearance",
+    "language": "Language",
+    "theme": "Theme",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  }
+}
