@@ -230,4 +230,41 @@ describe('RegisterForm', () => {
       );
     });
   });
+
+  it('shows default error message when error has no message', async () => {
+    const user = userEvent.setup();
+
+    // Mock register to throw an error with empty message
+    const originalRegister = useAuthStore.getState().register;
+    useAuthStore.setState({
+      register: async () => {
+        throw new Error('');
+      },
+    });
+
+    render(<RegisterForm />);
+
+    const nameInput = screen.getByTestId('register-name-input');
+    const emailInput = screen.getByTestId('register-email-input');
+    const passwordInput = screen.getByTestId('register-password-input');
+    const confirmPasswordInput = screen.getByTestId(
+      'register-confirm-password-input'
+    );
+    const submitButton = screen.getByTestId('register-submit-btn');
+
+    await user.type(nameInput, 'Test User');
+    await user.type(emailInput, 'test@example.com');
+    await user.type(passwordInput, '123456');
+    await user.type(confirmPasswordInput, '123456');
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('register-error')).toHaveTextContent(
+        /registration failed/i
+      );
+    });
+
+    // Restore original register function
+    useAuthStore.setState({ register: originalRegister });
+  });
 });

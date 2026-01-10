@@ -30,7 +30,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "test:coverage": "vitest --coverage",
+    "test:coverage": "vitest --coverage --run",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --max-warnings=0",
