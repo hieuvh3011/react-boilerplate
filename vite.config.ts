@@ -12,4 +12,22 @@ export default defineConfig({
         outDir: 'build',
         sourcemap: true,
     },
+    test: {
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: './src/setupTests.js',
+        coverage: {
+            provider: 'v8',
+            reporter: ['text', 'json', 'html', 'lcov'],
+            exclude: [
+                'node_modules/',
+                'src/setupTests.js',
+                'src/vite-env.d.ts',
+                'src/reportWebVitals.js',
+                '**/*.d.ts',
+                '**/*.config.*',
+                '**/dist/**',
+            ],
+        },
+    },
 });

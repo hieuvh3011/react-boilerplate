@@ -4,6 +4,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'small' | 'medium' | 'large';
   fullWidth?: boolean;
+  testId?: string;
   children: React.ReactNode;
 }
 
@@ -11,6 +12,7 @@ export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   fullWidth = false,
+  testId = 'button',
   className = '',
   children,
   ...props
@@ -42,7 +44,12 @@ export const Button: React.FC<ButtonProps> = ({
   const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${className}`;
 
   return (
-    <button type="button" className={buttonClasses} {...props}>
+    <button
+      type="button"
+      className={buttonClasses}
+      data-testid={testId}
+      {...props}
+    >
       {children}
     </button>
   );

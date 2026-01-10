@@ -19,6 +19,7 @@ export const ThemeToggle: React.FC = () => {
       onClick={toggleTheme}
       aria-label="Toggle theme"
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      data-testid="theme-toggle"
     >
       {theme === 'light' ? (
         <svg

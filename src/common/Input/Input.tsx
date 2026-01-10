@@ -5,6 +5,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   helperText?: string;
   fullWidth?: boolean;
+  testId?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -14,6 +15,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       error,
       helperText,
       fullWidth = true,
+      testId = 'input',
       className = '',
       required,
       ...props
@@ -27,20 +29,39 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     } ${className}`;
 
     return (
-      <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}>
+      <div
+        className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''}`}
+        data-testid={`${testId}-container`}
+      >
         {label && (
           <label
             className="text-sm font-medium text-gray-900 dark:text-gray-100"
             htmlFor={props.id}
+            data-testid={`${testId}-label`}
           >
             {label}
             {required && <span className="text-danger ml-1">*</span>}
           </label>
         )}
-        <input ref={ref} className={inputClasses} {...props} />
-        {error && <span className="text-xs text-danger mt-1">{error}</span>}
+        <input
+          ref={ref}
+          className={inputClasses}
+          data-testid={testId}
+          {...props}
+        />
+        {error && (
+          <span
+            className="text-xs text-danger mt-1"
+            data-testid={`${testId}-error`}
+          >
+            {error}
+          </span>
+        )}
         {!error && helperText && (
-          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <span
+            className="text-xs text-gray-500 dark:text-gray-400 mt-1"
+            data-testid={`${testId}-helper`}
+          >
             {helperText}
           </span>
         )}

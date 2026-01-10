@@ -11,11 +11,15 @@ export const Header: React.FC = () => {
   const { user, logout } = useAuthStore();
 
   return (
-    <header className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 sticky top-0 z-50 shadow-sm">
+    <header
+      className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 sticky top-0 z-50 shadow-sm"
+      data-testid="header"
+    >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
         <Link
           to="/"
           className="text-lg sm:text-xl lg:text-2xl font-bold text-primary flex items-center gap-1 sm:gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
+          data-testid="header-logo"
         >
           <span className="text-xl sm:text-2xl">⚛️</span>
           <span className="hidden xs:inline sm:inline">
@@ -29,7 +33,10 @@ export const Header: React.FC = () => {
 
           {user && (
             <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden md:block truncate max-w-[120px] lg:max-w-[200px]">
+              <span
+                className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden md:block truncate max-w-[120px] lg:max-w-[200px]"
+                data-testid="header-user-name"
+              >
                 {user.name}
               </span>
               <Button
@@ -37,6 +44,7 @@ export const Header: React.FC = () => {
                 size="small"
                 onClick={logout}
                 className="text-xs sm:text-sm"
+                testId="header-logout-btn"
               >
                 <span className="hidden sm:inline">{t('common.logout')}</span>
                 <span className="sm:hidden">
