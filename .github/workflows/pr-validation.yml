@@ -8,6 +8,10 @@ jobs:
   validate-pr:
     name: Validate Pull Request
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      contents: read
     
     steps:
       - name: Check PR Title Format
