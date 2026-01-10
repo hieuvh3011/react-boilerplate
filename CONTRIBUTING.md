@@ -353,31 +353,398 @@ const [isOpen, setIsOpen] = useState(false);
 
 ## 🧪 Testing Standards
 
-### Unit Tests
+### Overview
+
+This project maintains **100% test coverage** on all components, utilities, and stores. All tests must pass with **0 errors and 0 warnings** before merging.
+
+### Running Tests
+
+```bash
+npm test                    # Run in watch mode
+npm test -- --run          # Run once
+npm test:coverage          # With coverage report
+npm run lint               # Must pass with 0 errors, 0 warnings
+```
+
+### Core Principles
+
+1. **Use `data-testid` for element selection** - Never use text-based queries
+2. **No `any` types** - All mocks and test code must be properly typed
+3. **Test user behavior** - Not implementation details
+4. **Real-time validation** - Forms use `mode: 'onChange'`
+
+### 1. Element Selection with `data-testid`
+
+**Always use `data-testid` instead of text-based queries:**
 
 ```typescript
-// ✅ Test component behavior, not implementation
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Button } from './Button';
+// ❌ BAD - Breaks when text/translations change
+expect(screen.getByText('Submit')).toBeInTheDocument();
+expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
 
-describe('Button', () => {
-  it('calls onClick when clicked', () => {
-    const handleClick = jest.fn();
-    render(<Button onClick={handleClick}>Click me</Button>);
-    
-    fireEvent.click(screen.getByText('Click me'));
-    expect(handleClick).toHaveBeenCalledTimes(1);
+// ✅ GOOD - Robust and independent of content
+expect(screen.getByTestId('submit-button')).toBeInTheDocument();
+```
+
+**Add `data-testid` to all testable elements:**
+
+```tsx
+// Component
+export const LoginForm = () => {
+  return (
+    <form data-testid="login-form">
+      <Input 
+        testId="login-email-input"
+        label={t('auth.email')}
+      />
+      <Button testId="login-submit-btn">
+        {t('auth.submit')}
+      </Button>
+    </form>
+  );
+};
+
+// Test
+const form = screen.getByTestId('login-form');
+const emailInput = screen.getByTestId('login-email-input');
+const submitButton = screen.getByTestId('login-submit-btn');
+```
+
+**Naming Convention:** `{feature}-{element}-{type}`
+
+```typescript
+// Good examples
+'login-email-input'
+'register-submit-btn'
+'profile-avatar-img'
+'settings-theme-toggle'
+'header-logout-btn'
+```
+
+### 2. TypeScript Types in Tests
+
+**Never use `any` type - always use proper types:**
+
+```typescript
+// ❌ BAD
+vi.mock('react-router-dom', () => ({
+  Link: ({ children, to }: any) => <a href={to}>{children}</a>
+}));
+
+// ✅ GOOD
+vi.mock('react-router-dom', () => ({
+  Link: ({ children, to }: { children: React.ReactNode; to: string }) => 
+    <a href={to}>{children}</a>
+}));
+```
+
+**Mocking axios with proper types:**
+
+```typescript
+// Define typed mock
+type MockedAxiosInstance = {
+  post: ReturnType<typeof vi.fn>;
+  get: ReturnType<typeof vi.fn>;
+  put: ReturnType<typeof vi.fn>;
+  delete: ReturnType<typeof vi.fn>;
+};
+
+const mockedAxios = axiosInstance as unknown as MockedAxiosInstance;
+
+// Use in tests
+mockedAxios.post.mockResolvedValue({ 
+  data: { user: mockUser, token: 'mock-token' } 
+});
+```
+
+**Mocking localStorage with proper types:**
+
+```typescript
+// ❌ BAD
+(global as any).localStorage = localStorageMock;
+
+// ✅ GOOD
+(global as unknown as { localStorage: Storage }).localStorage = localStorageMock;
+```
+
+**Typed array operations:**
+
+```typescript
+// ❌ BAD
+const users = JSON.parse(localStorage.getItem('users') || '[]');
+const user = users.find((u: any) => u.id === '123');
+
+// ✅ GOOD
+const users = JSON.parse(localStorage.getItem('users') || '[]') as Array<{
+  id: string;
+  name: string;
+  email: string;
+}>;
+const user = users.find((u) => u.id === '123');
+```
+
+### 3. Form Validation Testing
+
+All forms use `mode: 'onChange'` for real-time validation:
+
+```typescript
+// LoginForm.tsx
+const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+  resolver: zodResolver(loginSchema),
+  mode: 'onChange', // ✅ Enable real-time validation
+});
+```
+
+**Testing validation:**
+
+```typescript
+it('validates email format in real-time', async () => {
+  const user = userEvent.setup();
+  render(<LoginForm />);
+  
+  const emailInput = screen.getByTestId('login-email-input');
+  
+  // Type invalid email
+  await user.type(emailInput, 'invalid-email');
+  
+  // Error appears immediately (not on submit)
+  await waitFor(() => {
+    expect(screen.getByText(/invalid email/i)).toBeInTheDocument();
   });
 });
 ```
 
-### Test File Naming
+### 4. Test Structure
+
+```typescript
+describe('ComponentName', () => {
+  beforeEach(() => {
+    // Reset mocks, clear localStorage, etc.
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  it('renders with correct test IDs', () => {
+    render(<Component />);
+    
+    expect(screen.getByTestId('component')).toBeInTheDocument();
+    expect(screen.getByTestId('component-title')).toBeInTheDocument();
+  });
+
+  it('handles user interaction', async () => {
+    const user = userEvent.setup();
+    const mockCallback = vi.fn();
+    
+    render(<Component onAction={mockCallback} />);
+    
+    await user.click(screen.getByTestId('action-button'));
+    
+    await waitFor(() => {
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('validates form input', async () => {
+    const user = userEvent.setup();
+    render(<FormComponent />);
+    
+    const input = screen.getByTestId('form-input');
+    await user.type(input, 'invalid');
+    
+    await waitFor(() => {
+      expect(screen.getByText(/error message/i)).toBeInTheDocument();
+    });
+  });
+});
+```
+
+### 5. Common Testing Patterns
+
+#### Testing with Router
+
+```typescript
+import { render } from '@app/test-utils'; // Includes BrowserRouter
+
+render(<ComponentWithLinks />);
+```
+
+#### Testing User Events
+
+```typescript
+import userEvent from '@testing-library/user-event';
+
+const user = userEvent.setup();
+
+// Typing
+await user.type(input, 'text');
+
+// Clicking
+await user.click(button);
+
+// Clearing
+await user.clear(input);
+```
+
+#### Testing Async Operations
+
+```typescript
+await waitFor(() => {
+  expect(screen.getByTestId('result')).toBeInTheDocument();
+}, { timeout: 3000 });
+```
+
+#### Testing Zustand Stores
+
+```typescript
+import { useAuthStore } from './authStore';
+
+beforeEach(() => {
+  // Reset store state
+  useAuthStore.setState({
+    user: null,
+    token: null,
+    isAuthenticated: false,
+  });
+});
+
+it('updates state correctly', async () => {
+  const { login } = useAuthStore.getState();
+  
+  await login('test@example.com', 'password');
+  
+  const { user, isAuthenticated } = useAuthStore.getState();
+  expect(isAuthenticated).toBe(true);
+  expect(user?.email).toBe('test@example.com');
+});
+```
+
+### 6. Coverage Requirements
+
+- **Components**: 100% coverage (statements, branches, functions, lines)
+- **Utilities**: 100% coverage
+- **Stores**: 100% coverage
+- **Overall Project**: >95% coverage
+
+Run coverage report:
+
+```bash
+npm test:coverage
+```
+
+### 7. Test File Naming
 
 ```
-Component.test.tsx          # Unit tests
-Component.integration.test.tsx  # Integration tests
-feature.e2e.ts              # E2E tests (Playwright)
+Component.test.tsx          # Component tests
+utils.test.ts               # Utility tests
+store.test.ts               # Store tests
 ```
+
+### 8. What to Test
+
+✅ **Do Test:**
+- Component renders correctly
+- User interactions (clicks, typing, form submission)
+- Validation logic
+- Error states
+- Loading states
+- Conditional rendering
+- Store state updates
+- API calls (mocked)
+
+❌ **Don't Test:**
+- Implementation details (internal state, private methods)
+- Third-party libraries
+- Styling (unless critical to functionality)
+
+### 9. Debugging Tests
+
+```typescript
+// View rendered DOM
+screen.debug();
+
+// View specific element
+screen.debug(screen.getByTestId('element'));
+
+// Check what's in the document
+console.log(screen.getByTestId('element').innerHTML);
+```
+
+### 10. Pre-commit Checklist
+
+Before committing, ensure:
+
+- [ ] All tests pass: `npm test -- --run`
+- [ ] Lint passes: `npm run lint` (0 errors, 0 warnings)
+- [ ] Coverage maintained: `npm test:coverage`
+- [ ] No `any` types in test code
+- [ ] All new components have `data-testid` attributes
+- [ ] All new features have tests
+
+### Example: Complete Test File
+
+```typescript
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen, waitFor } from '@app/test-utils';
+import userEvent from '@testing-library/user-event';
+import { LoginForm } from './LoginForm';
+
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+    Link: ({ children, to }: { children: React.ReactNode; to: string }) => (
+      <a href={to} data-testid="link">{children}</a>
+    ),
+  };
+});
+
+describe('LoginForm', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders all form elements', () => {
+    render(<LoginForm />);
+    
+    expect(screen.getByTestId('login-form')).toBeInTheDocument();
+    expect(screen.getByTestId('login-email-input')).toBeInTheDocument();
+    expect(screen.getByTestId('login-password-input')).toBeInTheDocument();
+    expect(screen.getByTestId('login-submit-btn')).toBeInTheDocument();
+  });
+
+  it('validates email in real-time', async () => {
+    const user = userEvent.setup();
+    render(<LoginForm />);
+    
+    const emailInput = screen.getByTestId('login-email-input');
+    await user.type(emailInput, 'invalid');
+    
+    await waitFor(() => {
+      expect(screen.getByText(/invalid email/i)).toBeInTheDocument();
+    });
+  });
+
+  it('submits form with valid data', async () => {
+    const user = userEvent.setup();
+    render(<LoginForm />);
+    
+    await user.type(screen.getByTestId('login-email-input'), 'test@example.com');
+    await user.type(screen.getByTestId('login-password-input'), 'password123');
+    await user.click(screen.getByTestId('login-submit-btn'));
+    
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+  });
+});
+```
+
+---
+
+**Remember**: Good tests are readable, maintainable, and test behavior, not implementation.
+
 
 ## 🔀 Git Workflow
 

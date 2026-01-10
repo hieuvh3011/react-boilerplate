@@ -35,6 +35,7 @@ export const RegisterForm: React.FC = () => {
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    mode: 'onChange',
   });
 
   const onSubmit = async (data: RegisterFormData) => {
@@ -54,6 +55,7 @@ export const RegisterForm: React.FC = () => {
     <form
       className="flex flex-col gap-6 w-full"
       onSubmit={handleSubmit(onSubmit)}
+      data-testid="register-form"
     >
       <div className="flex flex-col gap-4">
         <Input
@@ -62,6 +64,7 @@ export const RegisterForm: React.FC = () => {
           label={t('auth.name')}
           placeholder="John Doe"
           error={errors.name && t(`auth.${errors.name.message}`)}
+          testId="register-name-input"
           required
         />
 
@@ -71,6 +74,7 @@ export const RegisterForm: React.FC = () => {
           label={t('auth.email')}
           placeholder="user@example.com"
           error={errors.email && t(`auth.${errors.email.message}`)}
+          testId="register-email-input"
           required
         />
 
@@ -80,6 +84,7 @@ export const RegisterForm: React.FC = () => {
           label={t('auth.password')}
           placeholder="••••••••"
           error={errors.password && t(`auth.${errors.password.message}`)}
+          testId="register-password-input"
           required
         />
 
@@ -92,23 +97,36 @@ export const RegisterForm: React.FC = () => {
             errors.confirmPassword &&
             t(`auth.${errors.confirmPassword.message}`)
           }
+          testId="register-confirm-password-input"
           required
         />
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-danger rounded-md text-danger text-sm">
+        <div
+          className="p-4 bg-red-50 dark:bg-red-900/20 border border-danger rounded-md text-danger text-sm"
+          data-testid="register-error"
+        >
           {error}
         </div>
       )}
 
-      <Button type="submit" fullWidth disabled={isLoading}>
+      <Button
+        type="submit"
+        fullWidth
+        disabled={isLoading}
+        testId="register-submit-btn"
+      >
         {isLoading ? '...' : t('auth.registerButton')}
       </Button>
 
       <div className="text-center text-sm text-gray-600 dark:text-gray-400">
         {t('auth.alreadyHaveAccount')}{' '}
-        <Link to="/login" className="text-primary font-medium hover:underline">
+        <Link
+          to="/login"
+          className="text-primary font-medium hover:underline"
+          data-testid="register-login-link"
+        >
           {t('auth.login')}
         </Link>
       </div>

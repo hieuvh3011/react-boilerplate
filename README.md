@@ -289,36 +289,177 @@ export const API_ENDPOINTS = {
 
 ## 🧪 Testing
 
-### Unit & Integration Tests
+This project uses **Vitest** and **React Testing Library** for unit/integration tests, with **100% test coverage** on all components and utilities.
 
-Uses Jest and React Testing Library:
-
-```bash
-npm test
-npm test -- --coverage  # With coverage report
-```
-
-### E2E Tests
-
-Uses Playwright:
+### Running Tests
 
 ```bash
-npm run test:e2e        # Run tests
-npm run test:e2e:ui     # Run with UI
+npm test                    # Run tests in watch mode
+npm test -- --run          # Run tests once
+npm test:coverage          # Run with coverage report
+npm run lint               # Run linting (0 errors, 0 warnings required)
 ```
+
+### Testing Philosophy
+
+- ✅ **Use `data-testid`** for element selection (not text-based queries)
+- ✅ **Proper TypeScript types** - No `any` types in tests
+- ✅ **Test user behavior** - Not implementation details
+- ✅ **Real-time validation** - Forms use `mode: 'onChange'` for better UX
 
 ### Writing Tests
 
-```typescript
-// Component test
-import { render, screen } from '@testing-library/react';
-import { Button } from './Button';
+#### 1. **Always use `data-testid` for element selection**
 
-test('renders button', () => {
-  render(<Button>Click me</Button>);
-  expect(screen.getByText('Click me')).toBeInTheDocument();
+```typescript
+// ❌ BAD - Brittle, breaks when text changes
+expect(screen.getByText('Submit')).toBeInTheDocument();
+
+// ✅ GOOD - Robust, independent of text/translations
+expect(screen.getByTestId('submit-button')).toBeInTheDocument();
+```
+
+#### 2. **Add `data-testid` to components**
+
+```tsx
+// Component
+export const LoginForm = () => {
+  return (
+    <form data-testid="login-form">
+      <Input testId="login-email-input" />
+      <Button testId="login-submit-btn">Submit</Button>
+    </form>
+  );
+};
+
+// Test
+const emailInput = screen.getByTestId('login-email-input');
+const submitButton = screen.getByTestId('login-submit-btn');
+```
+
+#### 3. **Use proper TypeScript types - No `any`**
+
+```typescript
+// ❌ BAD
+vi.mock('react-router-dom', () => ({
+  Link: ({ children, to }: any) => <a href={to}>{children}</a>
+}));
+
+// ✅ GOOD
+vi.mock('react-router-dom', () => ({
+  Link: ({ children, to }: { children: React.ReactNode; to: string }) => 
+    <a href={to}>{children}</a>
+}));
+```
+
+#### 4. **Mock axios with proper types**
+
+```typescript
+type MockedAxiosInstance = {
+  post: ReturnType<typeof vi.fn>;
+  get: ReturnType<typeof vi.fn>;
+};
+
+const mockedAxios = axiosInstance as unknown as MockedAxiosInstance;
+mockedAxios.post.mockResolvedValue({ data: mockData });
+```
+
+#### 5. **Form validation tests**
+
+Forms use `mode: 'onChange'` for real-time validation:
+
+```typescript
+it('validates email format', async () => {
+  const user = userEvent.setup();
+  render(<LoginForm />);
+  
+  const emailInput = screen.getByTestId('login-email-input');
+  await user.type(emailInput, 'invalid-email');
+  
+  await waitFor(() => {
+    expect(screen.getByText(/invalid email/i)).toBeInTheDocument();
+  });
 });
 ```
+
+### Test Structure
+
+```typescript
+describe('ComponentName', () => {
+  beforeEach(() => {
+    // Setup
+  });
+
+  it('renders correctly', () => {
+    render(<Component />);
+    expect(screen.getByTestId('component')).toBeInTheDocument();
+  });
+
+  it('handles user interaction', async () => {
+    const user = userEvent.setup();
+    render(<Component />);
+    
+    await user.click(screen.getByTestId('button'));
+    
+    await waitFor(() => {
+      expect(screen.getByTestId('result')).toHaveTextContent('Success');
+    });
+  });
+});
+```
+
+### Coverage Requirements
+
+- **Components**: 100% coverage
+- **Utilities**: 100% coverage  
+- **Stores**: 100% coverage
+- **Overall**: >95% coverage
+
+### Common Patterns
+
+#### Testing with Router
+
+```typescript
+import { render } from '@app/test-utils'; // Uses BrowserRouter wrapper
+
+render(<ComponentWithLinks />);
+```
+
+#### Testing with User Events
+
+```typescript
+import userEvent from '@testing-library/user-event';
+
+const user = userEvent.setup();
+await user.type(input, 'text');
+await user.click(button);
+```
+
+#### Testing Async Operations
+
+```typescript
+await waitFor(() => {
+  expect(screen.getByTestId('result')).toBeInTheDocument();
+}, { timeout: 3000 });
+```
+
+### Best Practices
+
+1. **Test IDs Naming**: Use `{feature}-{element}-{type}` pattern
+   - `login-email-input`
+   - `register-submit-btn`
+   - `profile-avatar-img`
+
+2. **No `any` types**: Always use proper TypeScript types in tests
+
+3. **Mock properly**: Use typed mocks for axios, localStorage, etc.
+
+4. **Test behavior**: Focus on what users see and do, not implementation
+
+5. **Keep tests simple**: One concept per test
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed testing guidelines.
+
 
 ## 🎯 Path Aliases
 

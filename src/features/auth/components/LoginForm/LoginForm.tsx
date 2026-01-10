@@ -28,6 +28,7 @@ export const LoginForm: React.FC = () => {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    mode: 'onChange',
   });
 
   const onSubmit = async (data: LoginFormData) => {
@@ -47,6 +48,7 @@ export const LoginForm: React.FC = () => {
     <form
       className="flex flex-col gap-6 w-full"
       onSubmit={handleSubmit(onSubmit)}
+      data-testid="login-form"
     >
       <div className="flex flex-col gap-4">
         <Input
@@ -55,6 +57,7 @@ export const LoginForm: React.FC = () => {
           label={t('auth.email')}
           placeholder="user@example.com"
           error={errors.email && t(`auth.${errors.email.message}`)}
+          testId="login-email-input"
           required
         />
 
@@ -64,17 +67,26 @@ export const LoginForm: React.FC = () => {
           label={t('auth.password')}
           placeholder="••••••••"
           error={errors.password && t(`auth.${errors.password.message}`)}
+          testId="login-password-input"
           required
         />
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-danger rounded-md text-danger text-sm">
+        <div
+          className="p-4 bg-red-50 dark:bg-red-900/20 border border-danger rounded-md text-danger text-sm"
+          data-testid="login-error"
+        >
           {error}
         </div>
       )}
 
-      <Button type="submit" fullWidth disabled={isLoading}>
+      <Button
+        type="submit"
+        fullWidth
+        disabled={isLoading}
+        testId="login-submit-btn"
+      >
         {isLoading ? '...' : t('auth.loginButton')}
       </Button>
 
@@ -83,6 +95,7 @@ export const LoginForm: React.FC = () => {
         <Link
           to="/register"
           className="text-primary font-medium hover:underline"
+          data-testid="login-register-link"
         >
           {t('auth.register')}
         </Link>

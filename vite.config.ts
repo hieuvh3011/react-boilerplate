@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -11,5 +11,24 @@ export default defineConfig({
     build: {
         outDir: 'build',
         sourcemap: true,
+    },
+    test: {
+        globals: true,
+        environment: 'jsdom',
+        exclude: ['**/node_modules/**', '**/dist/**', '**/tests/e2e/**'],
+        setupFiles: './src/setupTests.js',
+        coverage: {
+            provider: 'v8',
+            reporter: ['text', 'json', 'html', 'lcov'],
+            exclude: [
+                'node_modules/',
+                'src/setupTests.js',
+                'src/vite-env.d.ts',
+                'src/reportWebVitals.js',
+                '**/*.d.ts',
+                '**/*.config.*',
+                '**/dist/**',
+            ],
+        },
     },
 });

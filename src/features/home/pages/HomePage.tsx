@@ -32,13 +32,25 @@ export const HomePage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col gap-8 sm:gap-10 lg:gap-12">
+      <div
+        className="flex flex-col gap-8 sm:gap-10 lg:gap-12"
+        data-testid="home-page"
+      >
         {/* Hero Section */}
-        <div className="text-center py-6 sm:py-8 lg:py-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4 px-4">
+        <div
+          className="text-center py-6 sm:py-8 lg:py-12"
+          data-testid="home-hero"
+        >
+          <h1
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4 px-4"
+            data-testid="home-title"
+          >
             {t('home.title')}
           </h1>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto px-4">
+          <p
+            className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto px-4"
+            data-testid="home-description"
+          >
             {t('home.description')}
           </p>
         </div>

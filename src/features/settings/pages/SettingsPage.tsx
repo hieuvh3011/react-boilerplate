@@ -12,8 +12,14 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-full sm:max-w-2xl lg:max-w-3xl">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 sm:mb-8">
+      <div
+        className="max-w-full sm:max-w-2xl lg:max-w-3xl"
+        data-testid="settings-page"
+      >
+        <h1
+          className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 sm:mb-8"
+          data-testid="settings-title"
+        >
           {t('settings.title')}
         </h1>
 

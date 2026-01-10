@@ -5,6 +5,7 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   description?: string;
   footer?: React.ReactNode;
   interactive?: boolean;
+  testId?: string;
   children?: React.ReactNode;
 }
 
@@ -13,6 +14,7 @@ export const Card: React.FC<CardProps> = ({
   description,
   footer,
   interactive = false,
+  testId = 'card',
   className = '',
   children,
   ...props
@@ -26,28 +28,40 @@ export const Card: React.FC<CardProps> = ({
   const cardClasses = `${baseClasses} ${interactiveClasses} ${className}`;
 
   return (
-    <div className={cardClasses} {...props}>
+    <div className={cardClasses} data-testid={testId} {...props}>
       {(title || description) && (
         <div className="mb-3 sm:mb-4">
           {title && (
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1 sm:mb-2">
+            <h3
+              className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1 sm:mb-2"
+              data-testid={`${testId}-title`}
+            >
               {title}
             </h3>
           )}
           {description && (
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+            <p
+              className="text-sm sm:text-base text-gray-600 dark:text-gray-400"
+              data-testid={`${testId}-description`}
+            >
               {description}
             </p>
           )}
         </div>
       )}
       {children && (
-        <div className="text-sm sm:text-base text-gray-900 dark:text-gray-100">
+        <div
+          className="text-sm sm:text-base text-gray-900 dark:text-gray-100"
+          data-testid={`${testId}-content`}
+        >
           {children}
         </div>
       )}
       {footer && (
-        <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div
+          className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700"
+          data-testid={`${testId}-footer`}
+        >
           {footer}
         </div>
       )}

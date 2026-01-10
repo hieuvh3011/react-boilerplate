@@ -36,12 +36,13 @@ export const LanguageSwitcher: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef} data-testid="language-switcher">
       <button
         type="button"
         className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-all text-sm text-gray-900 dark:text-gray-100"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Change language"
+        data-testid="language-switcher-button"
       >
         <span className="text-lg">{currentLanguage?.flag}</span>
         <span>{currentLanguage?.code.toUpperCase()}</span>
@@ -61,7 +62,10 @@ export const LanguageSwitcher: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-1 min-w-[120px] bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg overflow-hidden z-50">
+        <div
+          className="absolute top-full right-0 mt-1 min-w-[120px] bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg overflow-hidden z-50"
+          data-testid="language-switcher-dropdown"
+        >
           {languages.map((lang) => (
             <button
               key={lang.code}
@@ -72,6 +76,7 @@ export const LanguageSwitcher: React.FC = () => {
                   : 'hover:bg-gray-100 dark:hover:bg-gray-700'
               } text-gray-900 dark:text-gray-100`}
               onClick={() => handleLanguageChange(lang.code)}
+              data-testid={`language-option-${lang.code}`}
             >
               <span className="text-lg">{lang.flag}</span>
               <span>{lang.name}</span>
